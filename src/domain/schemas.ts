@@ -1,21 +1,41 @@
-// src/domain/schemas.ts
 import * as z from "zod";
 import { LIMITS } from "./limits";
 
 export const PeriodSchema = z.enum(["day", "week"]);
-const Minutes = z
-  .number("Please enter number")
-  .int("Please enter minutes")
-  .min(0, "Number must be more than 0")
-  .max(LIMITS.maxMinutesPerDay, `Please type 0 to ${LIMITS.maxMinutesPerDay} minutes`);
+type Period = z.infer<typeof PeriodSchema>;
+
+const fitsPeriod = (minutes: number, period: Period): boolean =>
+  minutes <=
+  (period === "day" ? LIMITS.maxMinutesPerDay : LIMITS.maxMinutesPerWeek);
+
+const periodLimitMessage = `Up to ${LIMITS.maxMinutesPerDay} minutes per day, ${LIMITS.maxMinutesPerWeek} per week`;
+
+export const MinutesSchema = z
+  .number({ error: "Please enter number" })
+  .int({ error: "Please enter number" })
+  .min(0, { error: "Start by 0" })
+  .max(1440, { error: "Most 1440 minutes in a day" });
 
 export const TimeBudgetSchema = z
   .strictObject({
     period: PeriodSchema,
-    availableMinutes: Minutes,
-    bufferMinutes: Minutes,
+    availableMinutes: MinutesSchema,
+    bufferMinutes: MinutesSchema,
   })
-  .refine(
-    (b) => b.period === "week" || b.availableMinutes <= LIMITS.maxMinutesPerDay,
-    { path: ["availableMinutes"], error: `SingleDay 0 to ${LIMITS.maxMinutesPerDay} minutes` },
-  );
+  .refine((b) => fitsPeriod(b.availableMinutes, b.period), {
+    path: ["availableMinutes"],
+    error: periodLimitMessage,
+  })
+  .readonly();
+export const GoalSchema = z
+  .strictObject({
+    id: z.string().min(1, { error: "Goal ID is required" }),
+    title: z.string().trim().min(1, { error: "Give this goal a name" }),
+    plannedMinutes: MinutesSchema,
+    period: PeriodSchema,
+  })
+  .refine((g) => fitsPeriod(g.plannedMinutes, g.period), {
+    path: ["plannedMinutes"],
+    error: periodLimitMessage,
+  })
+  .readonly();
