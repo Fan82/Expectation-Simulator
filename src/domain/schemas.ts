@@ -14,7 +14,7 @@ export const MinutesSchema = z
   .number({ error: "Please enter number" })
   .int({ error: "Please enter number" })
   .min(0, { error: "Start by 0" })
-  .max(1440, { error: "Most 1440 minutes in a day" });
+  .max(LIMITS.maxMinutesPerWeek, { error: "Most 1440 minutes in a day" });
 
 export const TimeBudgetSchema = z
   .strictObject({
