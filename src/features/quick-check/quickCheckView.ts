@@ -1,6 +1,7 @@
 import type { Adjustment, SimulationResult } from "../../domain/types";
 import { runQuickCheck } from "../../application/quickCheck";
 import { suggestAdjustments } from "../../simulation/adjustments";
+import { isQuickChange, applyQuickChange } from "../../application/quickChanges";
 
 export function renderQuickCheck(root: HTMLElement): void {
   root.innerHTML = `
@@ -23,6 +24,11 @@ export function renderQuickCheck(root: HTMLElement): void {
           <input id="available-minutes" type="number" inputmode="numeric"
                  min="0" max="1440" aria-describedby="available-hint" />
           <p id="available-hint" class="qc-hint">How much time you actually have after unexpected tasks</p>
+          <p class="qc-hint">What if…</p>
+          <div class="qc-changes">
+            <button type="button" class="qc-chip" data-change="halve">Halve time</button>
+            <button type="button" class="qc-chip" data-change="minus30">30 min less</button>
+          </div>
         </div>
       </form>
 
@@ -35,6 +41,8 @@ export function renderQuickCheck(root: HTMLElement): void {
   const planned = root.querySelector<HTMLInputElement>("#planned-minutes");
   const available = root.querySelector<HTMLInputElement>("#available-minutes");
   const resultSection = root.querySelector<HTMLElement>(".qc-result");
+  const changes = root.querySelector<HTMLElement>(".qc-changes");
+
   if (!form || !planned || !available || !resultSection) return;
 
   const update = () => {
@@ -43,7 +51,14 @@ export function renderQuickCheck(root: HTMLElement): void {
   };
 
   form.addEventListener("input", update);
-  update();
+
+  changes?.addEventListener("click", (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-change]");
+    const change = button?.dataset.change;
+    if (!isQuickChange(change) || Number.isNaN(available.valueAsNumber)) return;
+
+    available.value = String(applyQuickChange(available.valueAsNumber, change));
+  });
 }
 
 function el(tag: string, className: string, text: string): HTMLElement {
