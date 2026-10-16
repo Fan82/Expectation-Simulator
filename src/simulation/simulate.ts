@@ -1,19 +1,22 @@
-export function simulate(scenario: Scenario): SimulationResult {
-    const assumptions: string[] = [];
-    const capacityMinutes = Math.max(
-        0, scenario.budget.availableMinutes - scenario.budget.bufferMinutes,
-    );
-    assumptions.push("Buffer time is not included in the available time.")
+import type { Scenario, SimulationResult } from "../domain/types";
 
-    const gapMinutes = Math.max(
-        0, scenario.goal.plannedMinutes - capacityMinutes,
-    )
+export function simulate(scenario: Scenario): SimulationResult {
+    const { goal, timeBudget } = scenario;
+    const assumptions: string[] = [];
+
+    const schedulableMinutes = Math.max(
+        0,
+        timeBudget.availableMinutes - timeBudget.bufferMinutes,
+    );
+    assumptions.push("Buffer time is not included in the available time.");
+
+    const gapMinutes = Math.max(0, goal.plannedMinutes - schedulableMinutes);
 
     return {
-        period: scenario.goal.period,
-        plannedMinutes: scenario.goal.plannedMinutes,
-        capacityMinutes,
+        plannedMinutes: goal.plannedMinutes,
+        availableMinutes: timeBudget.availableMinutes,
+        schedulableMinutes,
         gapMinutes,
-        assumptions
-    }
+        assumptions,
+    };
 }
