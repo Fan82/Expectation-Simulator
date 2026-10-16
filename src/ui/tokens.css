@@ -1,0 +1,43 @@
+/* src/ui/tokens.css */
+:root {
+    color-scheme: light dark;
+    --color-bg: #f6f7f9;
+    --color-surface: #ffffff;
+    --color-text: #1f2933;
+    --color-text-muted: #5f6b7a;
+    --color-border: #dde2e8;
+    --color-accent: #3b6e8f;
+    --color-accent-soft: #e6eff5;
+    --color-gap: #a07c45;
+
+    --font-family: system-ui, "PingFang TC", "Noto Sans TC", sans-serif;
+    --font-size-sm: 0.875rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.75rem;
+
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --shadow-sm: 0 1px 3px rgb(15 23 42 / 0.06);
+    --tap-size: 2.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg: #14181d;
+        --color-surface: #1c2229;
+        --color-text: #e6e9ed;
+        --color-text-muted: #9aa5b1;
+        --color-border: #2c343d;
+        --color-accent: #7fb0cf;
+        --color-accent-soft: #22313c;
+        --color-gap: #d2b37f;
+        --shadow-sm: none;
+    }
+}
