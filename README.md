@@ -1,36 +1,41 @@
-# Expectation Simulator v3.0｜產品架構與完整開發計畫
-Expectation Simulator 將是一個同時支援「日常快速調整」與「深度情境模擬」的 Web App，並在後期加入 PWA 安裝能力及 AI 反思功能。
-規劃為 8 個階段、48 個開發單元。其中第 24 個單元就應該有可實際使用的第一版，第 48 個單元則是完整產品的交付驗收。
+# Expectation Simulator v3.0 | Product Architecture & Complete Development Plan
 
-## 正式產品定位
-Expectation Simulator 的核心不是追蹤你每天做了多少，而是當現實和原本的期待不一樣時，幫助你探索還有哪些可能的安排。
+Expectation Simulator is a Web App designed to support both **quick daily adjustments** and **in-depth scenario simulations**, with PWA installation capabilities and AI-powered reflection features planned for later stages.
 
-## 兩種模式
-- **Quick Check**：1–3 分鐘，日常快速調整
-- **Scenario Lab**：10–20 分鐘，多週深度情境模擬
+The development roadmap consists of **8 phases and 48 development units**. By Unit 24, the first fully usable version should be ready. Unit 48 marks the final product delivery and acceptance testing.
 
-## 指令
-| 指令 | 用途 |
+## Product Positioning
+
+Expectation Simulator is not about tracking how much you accomplish each day.
+
+Its core purpose is to help users **explore alternative possibilities and adjust their plans when reality doesn't match their original expectations.**
+
+## Two Core Modes
+
+- **Quick Check:** A 1–3 minute experience for making quick adjustments to daily plans.
+- **Scenario Lab:** A 10–20 minute experience for exploring and comparing scenarios over multiple weeks.
+
+## Development Commands
+
+| Command | Purpose |
 |---|---|
-| `npm run dev` | 啟動開發伺服器（不做型別檢查） |
-| `npm run typecheck` | 只做型別檢查 |
-| `npm run build` | 型別檢查並打包到 `dist/` |
-| `npm run preview` | 預覽打包結果 |
+| `npm run dev` | Start the development server without type checking |
+| `npm run typecheck` | Run TypeScript type checking only |
+| `npm run build` | Run type checking and build the application into `dist/` |
+| `npm run preview` | Preview the production build locally |
 
-## 分層規則
-- `src/domain`、`src/simulation`：純 TypeScript，不依賴瀏覽器與 AI
-- `src/application`：狀態管理
-- `src/features`、`src/ui`：畫面與共用元件
+## Architecture & Layer Responsibilities
 
-## 設計原則
-- 冷靜、留白充足，讓人感到「有選擇」而不是「落後」
-- 不用紅色代表「沒達成」
-- 手機優先，鍵盤可操作，尊重 `prefers-reduced-motion`
-- 數字由程式計算，AI 只負責解釋；不顯示失敗或連續天數
+The application follows a layered architecture with clear separation of responsibilities.
 
-## 目前進度
-- [ ] Day 01：初始化 Vite + strict TypeScript
-- [ ] Day 12：Quick Check 可用
-- [ ] Day 24：MVP
-- [ ] Day 36：PWA 完整工具
-- [ ] Day 48：正式發佈
+- **`src/domain` and `src/simulation`:** Pure TypeScript logic with no dependencies on browser APIs or AI services.
+- **`src/application`:** Application state management.
+- **`src/features` and `src/ui`:** Feature-specific interfaces and reusable UI components.
+
+## Design Principles
+
+- **Calm and spacious:** Use generous whitespace and a thoughtful visual hierarchy to help users feel that they have options rather than that they are falling behind.
+- **Non-judgmental feedback:** Never use red to indicate unmet expectations or incomplete goals.
+- **Accessible by default:** Prioritize mobile-first design, keyboard accessibility, and support for `prefers-reduced-motion`.
+- **Deterministic calculations:** All numerical results must be calculated by application logic. AI is responsible only for interpreting and explaining those results.
+- **No performance pressure:** Avoid failure labels, streak counters, or other mechanisms that encourage guilt or unnecessary pressure.
