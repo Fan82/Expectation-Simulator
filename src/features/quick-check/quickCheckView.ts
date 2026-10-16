@@ -15,14 +15,16 @@ export function renderQuickCheck(root: HTMLElement): void {
         <div class="qc-field">
           <label for="planned-minutes">Planned Time (minutes)</label>
           <input id="planned-minutes" type="number" inputmode="numeric"
-                 min="0" max="1440" aria-describedby="planned-hint" />
+                 min="0" max="1440" aria-describedby="planned-hint planned-error" />
+          <p id="planned-error" class="qc-error" hidden></p>
           <p id="planned-hint" class="qc-hint">How much time you originally planned to spend today</p>
         </div>
 
         <div class="qc-field">
           <label for="available-minutes">Available Time Today (minutes)</label>
           <input id="available-minutes" type="number" inputmode="numeric"
-                 min="0" max="1440" aria-describedby="available-hint" />
+                 min="0" max="1440" aria-describedby="available-hint available-error" />
+          <p id="available-error" class="qc-error" hidden></p>
           <p id="available-hint" class="qc-hint">How much time you actually have after unexpected tasks</p>
           <p class="qc-hint">What if…</p>
           <div class="qc-changes">
@@ -30,24 +32,31 @@ export function renderQuickCheck(root: HTMLElement): void {
             <button type="button" class="qc-chip" data-change="minus30">30 min less</button>
           </div>
         </div>
+
+        <button type="button" class="qc-reset">Reset</button>
       </form>
 
-      <section class="qc-result" aria-live="polite">
-        <p>Enter your time to see how you can plan your day.</p>
-      </section>
+      <section class="qc-result" aria-live="polite"></section>
     </main>
   `;
+
   const form = root.querySelector<HTMLFormElement>(".qc-card");
   const planned = root.querySelector<HTMLInputElement>("#planned-minutes");
   const available = root.querySelector<HTMLInputElement>("#available-minutes");
+  const plannedError = root.querySelector<HTMLElement>("#planned-error");
+  const availableError = root.querySelector<HTMLElement>("#available-error");
   const resultSection = root.querySelector<HTMLElement>(".qc-result");
   const changes = root.querySelector<HTMLElement>(".qc-changes");
+  const reset = root.querySelector<HTMLButtonElement>(".qc-reset");
 
-  if (!form || !planned || !available || !resultSection) return;
+  if (!form || !planned || !available || !plannedError || !availableError || !resultSection) return;
 
   const update = () => {
-    const result = runQuickCheck(planned.valueAsNumber, available.valueAsNumber)
-    renderResult(resultSection, result);
+    const outcome = runQuickCheck(planned.valueAsNumber, available.valueAsNumber);
+    const issues = outcome.status === "invalid" ? outcome.issues : [];
+    showFieldIssue(planned, plannedError, issues.find((i) => i.field === "planned")?.message);
+    showFieldIssue(available, availableError, issues.find((i) => i.field === "available")?.message);
+    renderResult(resultSection, outcome.status === "ok" ? outcome.result : null);
   };
 
   form.addEventListener("input", update);
@@ -58,7 +67,16 @@ export function renderQuickCheck(root: HTMLElement): void {
     if (!isQuickChange(change) || Number.isNaN(available.valueAsNumber)) return;
 
     available.value = String(applyQuickChange(available.valueAsNumber, change));
+    update();
   });
+
+  reset?.addEventListener("click", () => {
+    form.reset();
+    update();
+    planned.focus();
+  });
+
+  update();
 }
 
 function el(tag: string, className: string, text: string): HTMLElement {
@@ -143,4 +161,16 @@ function renderAdjustments(result: SimulationResult): HTMLElement {
     wrapper.append(card);
   }
   return wrapper;
+}
+
+function showFieldIssue(input: HTMLInputElement, errorEl: HTMLElement, message: string | undefined) {
+  if (message) {
+    errorEl.textContent = `ⓘ ${message}`;
+    errorEl.hidden = false;
+    input.setAttribute("aria-invalid", "true");
+  } else {
+    errorEl.textContent = "";
+    errorEl.hidden = true;
+    input.removeAttribute("aria-invalid");
+  }
 }

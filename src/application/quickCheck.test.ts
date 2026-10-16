@@ -1,22 +1,46 @@
 import { describe, it, expect } from "vitest";
 import { runQuickCheck } from "./quickCheck";
 
+const issueFields = (planned: number, available: number) => {
+    const outcome = runQuickCheck(planned, available);
+    return outcome.status === "invalid" ? outcome.issues.map((i) => i.field) : [];
+};
+
 describe("runQuickCheck", () => {
-    it("planned 60, available 30 → schedulable 30, gap 30", () => {
-        const result = runQuickCheck(60, 30);
-        expect(result?.schedulableMinutes).toBe(30);
-        expect(result?.gapMinutes).toBe(30);
+    it("60 / 30 → ok, gap 30", () => {
+        const outcome = runQuickCheck(60, 30);
+        expect(outcome.status).toBe("ok");
+        if (outcome.status === "ok") {
+            expect(outcome.result.schedulableMinutes).toBe(30);
+            expect(outcome.result.gapMinutes).toBe(30);
+        }
     });
 
-    it("enough time → gap 0", () => {
-        expect(runQuickCheck(30, 60)?.gapMinutes).toBe(0);
+    it("empty field → empty, not an error", () => {
+        expect(runQuickCheck(Number.NaN, 30).status).toBe("empty");
     });
 
-    it.each([
-        ["empty planned", Number.NaN, 30],
-        ["negative available", 60, -10],
-        ["over daily limit", 60, 1441],
-    ])("returns null for %s", (_label, planned, available) => {
-        expect(runQuickCheck(planned, available)).toBeNull();
+    it("negative available → issue on available", () => {
+        expect(issueFields(60, -10)).toEqual(["available"]);
+    });
+
+    it("over daily limit → issue on available", () => {
+        expect(issueFields(60, 1441)).toEqual(["available"]);
+    });
+
+    it("decimal planned → issue on planned", () => {
+        expect(issueFields(3.5, 30)).toEqual(["planned"]);
+    });
+
+    it("both fields invalid → two issues", () => {
+        expect(issueFields(-5, 2000)).toEqual(["planned", "available"]);
+    });
+
+    it("0 / 0 is valid", () => {
+        const outcome = runQuickCheck(0, 0);
+        expect(outcome.status).toBe("ok");
+        if (outcome.status === "ok") {
+            expect(outcome.result.gapMinutes).toBe(0);
+        }
     });
 });
