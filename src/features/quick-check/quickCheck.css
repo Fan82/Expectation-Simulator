@@ -58,3 +58,35 @@
     color: var(--color-text-muted);
     text-align: center;
 }
+
+.qc-result[data-state="result"] {
+    border-style: solid;
+    background: var(--color-surface);
+    text-align: left;
+}
+
+.qc-result p {
+    margin: 0;
+}
+
+.qc-result-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+}
+
+.qc-result-value {
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    margin-bottom: var(--space-2);
+}
+
+.qc-result-gap {
+    color: var(--color-gap);
+    margin-bottom: var(--space-4);
+}
+
+.qc-result-assumptions {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-4);
+    font-size: var(--font-size-sm);
+}

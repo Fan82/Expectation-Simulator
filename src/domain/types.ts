@@ -16,7 +16,7 @@ export type SimulationResult = {
   readonly schedulableMinutes: Minutes;
   readonly gapMinutes: Minutes;
   readonly assumptions: readonly string[];
-  readonly period: Period;
+  readonly period?: Period;
 };
 
 export type TimeBudget = z.infer<typeof TimeBudgetSchema>;

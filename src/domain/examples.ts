@@ -20,6 +20,7 @@ export const exampleScenario = {
 } as const satisfies Scenario
 
 export const exampleResult = {
+    period: "day",
     plannedMinutes: 60,
     availableMinutes: 60,
     schedulableMinutes: 40, // 可安排 = 可用 60 − 緩衝 20 = 40
