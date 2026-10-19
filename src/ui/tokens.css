@@ -27,6 +27,10 @@
     --radius-lg: 1rem;
     --shadow-sm: 0 1px 3px rgb(15 23 42 / 0.06);
     --tap-size: 2.75rem;
+    --color-attention: #b7791f;
+    --color-attention-surface: #d4a15656;
+    --opacity-paused: 0.55;
+    --motion-duration-sm: 150ms;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -40,5 +44,6 @@
         --color-accent-soft: #22313c;
         --color-gap: #d2b37f;
         --shadow-sm: none;
+        --color-attention: #e0b56a;
     }
 }

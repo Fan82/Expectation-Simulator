@@ -11,5 +11,6 @@ body {
     * {
         transition: none !important;
         animation: none !important;
+        animation-duration: 0ms !important;
     }
 }

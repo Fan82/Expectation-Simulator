@@ -43,4 +43,12 @@ describe("runQuickCheck", () => {
             expect(outcome.result.gapMinutes).toBe(0);
         }
     });
+    it("0/0 is valid and all numbers are finite", () => {
+        const outcome = runQuickCheck(0, 0)
+        expect(outcome.status).toBe("ok")
+        if (outcome.status === "ok") {
+            expect(outcome.result.gapMinutes).toBe(0)
+            expect(Number.isFinite(outcome.result.schedulableMinutes)).toBe(true)
+        }
+    })
 });
