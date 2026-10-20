@@ -2,6 +2,7 @@
 import type { Minutes, Period } from './types';
 
 export const MINUTES_PER_HOUR = 60;
+export const MINUTES_PER_WEEK = 7 * 24 * 60
 export const HOURS_PER_DAY = 24;
 export const MINUTES_PER_DAY = MINUTES_PER_HOUR * HOURS_PER_DAY;
 export const DAYS_PER_WEEK = 7;
