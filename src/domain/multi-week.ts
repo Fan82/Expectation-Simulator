@@ -1,5 +1,12 @@
 export const MAX_WEEKS = 12
 
+export type WeekCapacity = Readonly<{
+    id: string;
+    plannedMinutes: number;
+    availableMinutes: number;
+    note?: string | undefined;
+}>
+
 export type WeekPlan = {
     readonly weekIndex: number;
     readonly plannedMinutes: number;
@@ -7,11 +14,11 @@ export type WeekPlan = {
     readonly note?: string | undefined;
 }
 
-export type MultiWeekScenario = {
-    readonly id: string;
-    readonly goalId: string;
-    readonly label: string;
-    readonly weeks: readonly WeekPlan[];
-}
+export type MultiWeekScenario = Readonly<{
+    id: string;
+    goalId: string;
+    label: string;
+    weeks: readonly WeekCapacity[];
+}>;
 
-export const getWeekCount = (s: MultiWeekScenario ): number => s.weeks.length;
+export const getWeekCount = (s: MultiWeekScenario): number => s.weeks.length;
