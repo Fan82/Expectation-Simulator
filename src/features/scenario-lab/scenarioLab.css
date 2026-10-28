@@ -1,0 +1,215 @@
+.scenario-lab {
+  width: 100%;
+  max-width: 68rem;
+  margin: var(--space-6) auto;
+  padding: var(--space-5) var(--space-4);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-sizing: border-box;
+}
+
+.scenario-lab *,
+.scenario-lab *::before,
+.scenario-lab *::after {
+  box-sizing: border-box;
+}
+
+.scenario-lab__title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  line-height: 1.3;
+}
+
+.scenario-lab__intro {
+  margin: var(--space-1) 0 var(--space-5);
+  color: var(--color-text-muted);
+}
+
+/* 週數 stepper */
+.scenario-lab__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.scenario-lab__count-label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.scenario-lab__count {
+  min-width: 5.5rem;
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.scenario-lab__step {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: inherit;
+  font: inherit;
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  transition: background-color var(--duration-base) ease;
+}
+
+.scenario-lab__step:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+}
+
+.scenario-lab__step:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.scenario-lab__step:focus-visible,
+.scenario-lab__input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.scenario-lab__message {
+  min-height: 1.5rem;
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* 週卡片 */
+.scenario-lab__weeks {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  margin: 0;
+}
+
+.scenario-lab__week {
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.scenario-lab__week-title {
+  padding: 0 var(--space-2);
+  font-weight: 600;
+}
+
+.scenario-lab__field {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.scenario-lab__input {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 輸入有誤：用溫和的提醒色，不用紅色 */
+.scenario-lab__input[aria-invalid="true"] {
+  border-color: var(--color-attention);
+  box-shadow: 0 0 0 1px var(--color-attention);
+}
+
+/* 結果區 */
+.scenario-lab__summary {
+  margin-top: var(--space-5);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.scenario-lab__totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-4);
+}
+
+.scenario-lab__total dt {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.scenario-lab__total dd {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.scenario-lab__gap-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scenario-lab__gap-label {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-size: var(--font-size-sm);
+}
+
+.scenario-lab__gap-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-gap-track);
+}
+
+.scenario-lab__gap-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-gap-soft);
+  transition: width var(--duration-base) ease;
+}
+
+.scenario-lab__assumptions {
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.scenario-lab__assumptions summary {
+  cursor: pointer;
+}
+
+@media (min-width: 48rem) {
+  .scenario-lab {
+    padding: var(--space-6);
+  }
+
+  .scenario-lab__weeks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scenario-lab__step,
+  .scenario-lab__gap-bar {
+    transition: none;
+  }
+}
