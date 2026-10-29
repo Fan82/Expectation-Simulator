@@ -8,7 +8,7 @@ export function simulateMultiWeek(
 ) {
     let cumulative = 0;
     const weeks = scenario.weeks.map((week, i) => {
-        const reserve = applyReserve(week.availableMinutes, settings); 
+        const reserve = applyReserve(week.availableMinutes, settings);
         const reservedWeek = { ...week, availableMinutes: reserve.usableMinutes };
 
         const result = simulateWeek(reservedWeek, i);
@@ -27,7 +27,11 @@ export function simulateMultiWeek(
         spareMinutes: sum('spareMinutes'),
     };
 
-    const assumptions = ['weeks-independent'] as const;
+    const hasReserve = settings.restDaysPerWeek > 0 || settings.bufferPercent > 0;
 
-    return { scenarioId: scenario.id, weeks, totals, assumptions };
+    const assumptions = hasReserve
+        ? (['weeks-independent', 'rest-even-split', 'rest-before-buffer', 'reserve-once-per-week'] as const)
+        : (['weeks-independent'] as const);
+
+    return { weeks, assumptions, scenarioId: scenario.id, totals };
 }

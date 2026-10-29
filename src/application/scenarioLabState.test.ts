@@ -5,7 +5,7 @@ import {
 } from "./scenarioLabState";
 
 describe("setWeekCount", () => {
-  it("增加週數時，原本的週保持不變", () => {
+  it("When increasing the number of weeks, the original number of weeks remains unchanged.", () => {
     const initial = createInitialLabState();
     const grown = setWeekCount(initial, 4);
 

@@ -20,6 +20,9 @@
   --color-gap-soft: #cbb89d;
   --color-gap-track: #ece8e1;
   --color-attention: #c9a24a;
+
+  --color-rest: #e9dfd0;
+  --color-reserve: #d5dde6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -27,5 +30,7 @@
     --color-gap-soft: #8a7a63;
     --color-gap-track: #2e2b27;
     --color-attention: #d4b46a;
+    --color-rest: #4a4237;
+    --color-reserve: #3a4552;
   }
 }

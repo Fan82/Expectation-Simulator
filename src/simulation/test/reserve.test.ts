@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { applyReserve } from '../reserve'
+import { reserveSettingsSchema } from '../../domain/schemas';
 
 describe('applyReserve', () => {
     it('First deduct from rest, then deduct from buffer.', () => {
@@ -26,5 +27,13 @@ describe('applyReserve', () => {
         const r = applyReserve(600, { restDaysPerWeek: 2, bufferPercent: 20 })
         expect(r.restMinutes + r.bufferMinutes + r.usableMinutes).toBe(600)
     })
+
+    it('Reject unreasonable retention settings', () => {
+        expect(reserveSettingsSchema.safeParse({ restDaysPerWeek: 7, bufferPercent: 10 }).success).toBe(false)
+    })
+
+    it('Accept reasonable retention settings', () => {
+        expect(reserveSettingsSchema.safeParse({ restDaysPerWeek: 1, bufferPercent: 15 }).success).toBe(true);
+    });
 
 })

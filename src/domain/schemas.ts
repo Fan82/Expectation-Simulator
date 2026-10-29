@@ -39,3 +39,8 @@ export const GoalSchema = z
     error: periodLimitMessage,
   })
   .readonly();
+
+export const reserveSettingsSchema = z.object({
+  restDaysPerWeek: z.number().int().min(0).max(6),
+  bufferPercent: z.number().min(0).max(50),
+})
