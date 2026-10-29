@@ -4,6 +4,8 @@ import {
     setWeekCount,
     updateWeek,
     isWeekField,
+    getActive,
+    updateReserve,
     MIN_WEEKS,
     MAX_WEEKS,
     type LabState,
@@ -11,7 +13,6 @@ import {
 } from "../../application/scenarioLabState";
 import { simulateMultiWeek } from "../../simulation/simulateMultiWeek";
 import { createReserveFieldset } from "./reserveFieldset";
-import type { ReserveSettings } from "../../simulation/reserve";
 
 const FIELDS: ReadonlyArray<{ field: WeekField; label: string }> = [
     { field: "plannedMinutes", label: "Planned (min)" },
@@ -42,7 +43,6 @@ function el<K extends keyof HTMLElementTagNameMap>(
 
 export function renderScenarioLab(container: HTMLElement): void {
     let state: LabState = createInitialLabState();
-    let reserveSettings: ReserveSettings = { restDaysPerWeek: 0, bufferPercent: 0 };
 
     const section = el("section", "scenario-lab");
     section.setAttribute("aria-labelledby", "scenario-lab-title");
@@ -78,8 +78,8 @@ export function renderScenarioLab(container: HTMLElement): void {
     summary.setAttribute("aria-live", "polite");
     summary.setAttribute("aria-label", "Results");
 
-    const reserveFieldset = createReserveFieldset(reserveSettings, (next) => {
-        reserveSettings = next;
+    const reserveFieldset = createReserveFieldset(getActive(state).reserve, (next) => {
+        state = updateReserve(state, next);
         renderSummary();
     });
 
@@ -87,7 +87,7 @@ export function renderScenarioLab(container: HTMLElement): void {
     container.append(section);
 
     function renderWeeks(): void {
-        const cards = state.scenario.weeks.map((week, index) => {
+        const cards = getActive(state).scenario.weeks.map((week, index) => {
             const card = el("fieldset", "scenario-lab__week");
             card.append(el("legend", "scenario-lab__week-title", `Week ${index + 1}`));
 
@@ -112,8 +112,9 @@ export function renderScenarioLab(container: HTMLElement): void {
     }
 
     function renderSummary(): void {
-        const result = simulateMultiWeek(state.scenario, reserveSettings);
-
+        const active = getActive(state);
+        const result = simulateMultiWeek(active.scenario, active.reserve);
+        
         const totals = el("dl", "scenario-lab__totals");
         const totalItems: Array<[string, number]> = [
             ["Planned", result.totals.plannedMinutes],
@@ -157,7 +158,7 @@ export function renderScenarioLab(container: HTMLElement): void {
     }
 
     function renderControls(): void {
-        const count = state.scenario.weeks.length;
+        const count = getActive(state).scenario.weeks.length;
         weekCountLabel.textContent = `${count} ${count === 1 ? "week" : "weeks"}`;
         minusButton.disabled = count <= MIN_WEEKS;
         plusButton.disabled = count >= MAX_WEEKS;
@@ -170,7 +171,7 @@ export function renderScenarioLab(container: HTMLElement): void {
     }
 
     function changeWeekCount(delta: number): void {
-        state = setWeekCount(state, state.scenario.weeks.length + delta);
+        state = setWeekCount(state, getActive(state).scenario.weeks.length + delta);
         message.textContent = "";
         renderAll();
     }
