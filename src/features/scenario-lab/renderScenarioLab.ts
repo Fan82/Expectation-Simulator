@@ -10,6 +10,8 @@ import {
     type WeekField,
 } from "../../application/scenarioLabState";
 import { simulateMultiWeek } from "../../simulation/simulateMultiWeek";
+import { createReserveFieldset } from "./reserveFieldset";
+import type { ReserveSettings } from "../../simulation/reserve";
 
 const FIELDS: ReadonlyArray<{ field: WeekField; label: string }> = [
     { field: "plannedMinutes", label: "Planned (min)" },
@@ -19,8 +21,13 @@ const FIELDS: ReadonlyArray<{ field: WeekField; label: string }> = [
 const ASSUMPTION_TEXT: Record<string, string> = {
     "weeks-independent":
         "Each week is calculated on its own. Unused time does not carry over to the next week.",
+    "rest-even-split":
+        "Rest time is estimated by spreading available time evenly across 7 days.",
+    "rest-before-buffer":
+        "Rest is set aside first, then the buffer is taken from the remaining time.",
+    "reserve-once-per-week":
+        "Rest and buffer are applied once per week. Totals are the sum of each week.",
 };
-
 
 function el<K extends keyof HTMLElementTagNameMap>(
     tag: K,
@@ -35,7 +42,7 @@ function el<K extends keyof HTMLElementTagNameMap>(
 
 export function renderScenarioLab(container: HTMLElement): void {
     let state: LabState = createInitialLabState();
-
+    let reserveSettings: ReserveSettings = { restDaysPerWeek: 0, bufferPercent: 0 };
 
     const section = el("section", "scenario-lab");
     section.setAttribute("aria-labelledby", "scenario-lab-title");
@@ -71,10 +78,14 @@ export function renderScenarioLab(container: HTMLElement): void {
     summary.setAttribute("aria-live", "polite");
     summary.setAttribute("aria-label", "Results");
 
-    section.append(title, intro, controls, message, form, summary);
+    const reserveFieldset = createReserveFieldset(reserveSettings, (next) => {
+        reserveSettings = next;
+        renderSummary();
+    });
+
+    section.append(title, intro, controls, message, form, reserveFieldset, summary);
     container.append(section);
 
-    // ---- 週數改變時才呼叫：重建週卡片 ----
     function renderWeeks(): void {
         const cards = state.scenario.weeks.map((week, index) => {
             const card = el("fieldset", "scenario-lab__week");
@@ -101,7 +112,7 @@ export function renderScenarioLab(container: HTMLElement): void {
     }
 
     function renderSummary(): void {
-        const result = simulateMultiWeek(state.scenario);
+        const result = simulateMultiWeek(state.scenario, reserveSettings);
 
         const totals = el("dl", "scenario-lab__totals");
         const totalItems: Array<[string, number]> = [

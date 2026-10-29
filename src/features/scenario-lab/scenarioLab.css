@@ -197,6 +197,23 @@
   cursor: pointer;
 }
 
+.reserve__label-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.reserve__range {
+  width: 100%;
+  min-height: 44px;
+  accent-color: var(--color-accent);
+}
+
+.reserve__hint {
+  margin: 0;
+  min-height: 1.25em;
+  color: var(--color-text-muted);
+}
+
 @media (min-width: 48rem) {
   .scenario-lab {
     padding: var(--space-6);
@@ -208,6 +225,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .scenario-lab__step,
   .scenario-lab__gap-bar {
     transition: none;
