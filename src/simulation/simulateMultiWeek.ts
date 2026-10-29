@@ -1,12 +1,19 @@
-import type { MultiWeekScenario, MultiWeekResult, WeekResult } from '../domain/multi-week';
+import type { MultiWeekScenario, WeekResult } from '../domain/multi-week';
 import { simulateWeek } from './simulateWeek';
+import { applyReserve, type ReserveSettings } from './reserve';
 
-export function simulateMultiWeek(scenario: MultiWeekScenario): MultiWeekResult {
+export function simulateMultiWeek(
+    scenario: MultiWeekScenario,
+    settings: ReserveSettings = { restDaysPerWeek: 0, bufferPercent: 0 },
+) {
     let cumulative = 0;
     const weeks = scenario.weeks.map((week, i) => {
-        const result = simulateWeek(week, i);
+        const reserve = applyReserve(week.availableMinutes, settings); 
+        const reservedWeek = { ...week, availableMinutes: reserve.usableMinutes };
+
+        const result = simulateWeek(reservedWeek, i);
         cumulative += result.investedMinutes;
-        return { ...result, cumulativeInvestedMinutes: cumulative };
+        return { ...result, reserve, cumulativeInvestedMinutes: cumulative };
     });
 
     const sum = (key: keyof Omit<WeekResult, 'weekId' | 'weekIndex' | 'cumulativeInvestedMinutes'>) =>
