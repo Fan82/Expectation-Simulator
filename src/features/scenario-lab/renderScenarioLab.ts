@@ -44,8 +44,11 @@ function el<K extends keyof HTMLElementTagNameMap>(
   return node;
 }
 
-export function renderScenarioLab(container: HTMLElement): void {
-  let state: LabState = createInitialLabState();
+export function renderScenarioLab(
+  container: HTMLElement,
+  initialState: LabState = createInitialLabState(),
+): void {
+  let state: LabState = initialState;
 
   const section = el("section", "scenario-lab");
   section.setAttribute("aria-labelledby", "scenario-lab-title");

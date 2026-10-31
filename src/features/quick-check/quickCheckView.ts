@@ -1,9 +1,15 @@
 import type { Adjustment, SimulationResult } from "../../domain/types";
 import { runQuickCheck } from "../../application/quickCheck";
 import { suggestAdjustments } from "../../simulation/adjustments";
-import { isQuickChange, applyQuickChange } from "../../application/quickChanges";
+import {
+  isQuickChange,
+  applyQuickChange,
+} from "../../application/quickChanges";
 
-export function renderQuickCheck(root: HTMLElement): void {
+export function renderQuickCheck(
+  root: HTMLElement,
+  initial?: { plannedMinutes: number; availableMinutes: number },
+): void {
   root.innerHTML = `
     <main class="qc">
       <header class="qc-header">
@@ -49,20 +55,49 @@ export function renderQuickCheck(root: HTMLElement): void {
   const changes = root.querySelector<HTMLElement>(".qc-changes");
   const reset = root.querySelector<HTMLButtonElement>(".qc-reset");
 
-  if (!form || !planned || !available || !plannedError || !availableError || !resultSection) return;
+  if (
+    !form ||
+    !planned ||
+    !available ||
+    !plannedError ||
+    !availableError ||
+    !resultSection
+  )
+    return;
+
+  if (initial) {
+    planned.defaultValue = String(initial.plannedMinutes);
+    available.defaultValue = String(initial.availableMinutes);
+  }
 
   const update = () => {
-    const outcome = runQuickCheck(planned.valueAsNumber, available.valueAsNumber);
+    const outcome = runQuickCheck(
+      planned.valueAsNumber,
+      available.valueAsNumber,
+    );
     const issues = outcome.status === "invalid" ? outcome.issues : [];
-    showFieldIssue(planned, plannedError, issues.find((i) => i.field === "planned")?.message);
-    showFieldIssue(available, availableError, issues.find((i) => i.field === "available")?.message);
-    renderResult(resultSection, outcome.status === "ok" ? outcome.result : null);
+    showFieldIssue(
+      planned,
+      plannedError,
+      issues.find((i) => i.field === "planned")?.message,
+    );
+    showFieldIssue(
+      available,
+      availableError,
+      issues.find((i) => i.field === "available")?.message,
+    );
+    renderResult(
+      resultSection,
+      outcome.status === "ok" ? outcome.result : null,
+    );
   };
 
   form.addEventListener("input", update);
 
   changes?.addEventListener("click", (event) => {
-    const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-change]");
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
+      "[data-change]",
+    );
     const change = button?.dataset.change;
     if (!isQuickChange(change) || Number.isNaN(available.valueAsNumber)) return;
 
@@ -86,12 +121,17 @@ function el(tag: string, className: string, text: string): HTMLElement {
   return node;
 }
 
-function renderResult(section: HTMLElement, result: SimulationResult | null): void {
+function renderResult(
+  section: HTMLElement,
+  result: SimulationResult | null,
+): void {
   section.replaceChildren();
 
   if (result === null) {
     section.dataset.state = "empty";
-    section.append(el("p", "", "Enter your time to see how you can plan your day."));
+    section.append(
+      el("p", "", "Enter your time to see how you can plan your day."),
+    );
     return;
   }
 
@@ -143,7 +183,9 @@ function renderAdjustments(result: SimulationResult): HTMLElement {
 
   const adjustments = suggestAdjustments(result);
   if (adjustments.length === 0) {
-    wrapper.append(el("p", "qc-adjust-none", "Your plan fits today. No adjustment needed."));
+    wrapper.append(
+      el("p", "qc-adjust-none", "Your plan fits today. No adjustment needed."),
+    );
     return wrapper;
   }
 
@@ -163,7 +205,11 @@ function renderAdjustments(result: SimulationResult): HTMLElement {
   return wrapper;
 }
 
-function showFieldIssue(input: HTMLInputElement, errorEl: HTMLElement, message: string | undefined) {
+function showFieldIssue(
+  input: HTMLInputElement,
+  errorEl: HTMLElement,
+  message: string | undefined,
+) {
   if (message) {
     errorEl.textContent = `ⓘ ${message}`;
     errorEl.hidden = false;
